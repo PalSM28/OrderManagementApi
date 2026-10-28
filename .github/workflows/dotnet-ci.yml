@@ -1,0 +1,33 @@
+name: Order Management API - CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v6
+
+      - name: Set up .NET SDK
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: "9.0.x"
+
+      - name: Restore dependencies
+        run: dotnet restore ./OrderManagement.csproj
+
+      - name: Build solution
+        run: dotnet build ./OrderManagement.csproj --configuration Release --no-restore
+
+      - name: Run tests
+        run: dotnet test ./OrderManagement.sln --configuration Release --no-build --verbosity normal
